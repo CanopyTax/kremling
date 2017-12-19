@@ -1,0 +1,19 @@
+{
+  "name": "kremling",
+  "version": "0.1.0",
+  "description": "Embarrassingly simple css for React",
+  "main": "lib/kremling.js",
+  "repository": "git@github.com:CanopyTax/kremling.git",
+  "author": "Joel Denning <joel.denning@canopytax.com>",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-env": "^2.4.1",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0"
+  },
+  "scripts": {
+    "prepublish": "yarn compile",
+    "compile": "babel src --out-dir lib --source-maps"
+  }
+}
