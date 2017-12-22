@@ -7,12 +7,15 @@ let counter = 0;
 export class Local extends React.Component {
   static propTypes = {
     css: PropTypes.string.isRequired,
+    namespace: PropTypes.string,
   }
-  static defaultTagname = 'div';
   static defaultNamespace = 'kremling';
   constructor(props) {
     super(props);
     if (typeof props.css === 'string') {
+      if (props.css.indexOf('&') <= 0) {
+        console.warn(`Kremling's <Local css="..."> css prop should have the '&' character in it to locally scope css classes`);
+      }
       const existingDomEl = styleTags[props.css];
       if (existingDomEl) {
         this.styleRef = existingDomEl;
@@ -23,14 +26,18 @@ export class Local extends React.Component {
         this.kremlingAttrValue = counter++;
 
         // The css to append to the dom
-        const cssSelector = `[${this.kremlingAttrName}="${this.kremlingAttrValue}"]`;
-        const transformedCSS = props.css.replace('&', cssSelector);
+        const kremlingSelector = `[${this.kremlingAttrName}="${this.kremlingAttrValue}"]`;
+        const transformedCSS = props.css.replace(/& (.+){/, (match, cssRule) => {
+          cssRule = cssRule.trim();
+          return `${kremlingSelector} ${cssRule}, ${kremlingSelector}${cssRule} {`;
+        });
 
         // The dom element
         const el = document.createElement('style');
+        el.setAttribute('type', 'text/css');
         el.textContent = transformedCSS;
         el.kremlings = 1;
-        el.kremlingAttr = cssSelector;
+        el.kremlingAttr = kremlingSelector;
         document.head.appendChild(el);
         styleTags[props.css] = el;
         this.styleRef = existingDomEl;
@@ -38,7 +45,13 @@ export class Local extends React.Component {
     }
   }
   render() {
-    return React.createElement(this.props.tagName || Local.defaultTagname, {[this.kremlingAttrName]: this.kremlingAttrValue}, this.props.children);
+    return React.Children.map(this.props.children, child => {
+      if (React.isValidElement(child)) {
+        return React.cloneElement(child, {[this.kremlingAttrName]: this.kremlingAttrValue});
+      } else {
+        return child;
+      }
+    });
   }
   componentWillUnmount() {
     if (--this.styleRef.kremlings === 0) {
