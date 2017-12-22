@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const styleTags = {};
 let counter = 0;
 
-export class Local extends React.Component {
+export class Scoped extends React.Component {
   static propTypes = {
     css: PropTypes.string.isRequired,
     namespace: PropTypes.string,
@@ -14,15 +14,17 @@ export class Local extends React.Component {
     super(props);
     if (typeof props.css === 'string') {
       if (props.css.indexOf('&') <= 0) {
-        console.warn(`Kremling's <Local css="..."> css prop should have the '&' character in it to locally scope css classes`);
+        console.warn(`Kremling's <Scoped css="..."> css prop should have the '&' character in it to scope the css classes`);
       }
       const existingDomEl = styleTags[props.css];
       if (existingDomEl) {
         this.styleRef = existingDomEl;
         existingDomEl.kremlings++;
+        this.kremlingAttrName = this.styleRef.kremlingAttr;
+        this.kremlingAttrValue = this.styleRef.kremlingValue;
       } else {
         // The attribute for namespacing the css
-        this.kremlingAttrName = `data-${props.namespace || Local.defaultNamespace}`;
+        this.kremlingAttrName = `data-${props.namespace || Scoped.defaultNamespace}`;
         this.kremlingAttrValue = counter++;
 
         // The css to append to the dom
@@ -38,9 +40,10 @@ export class Local extends React.Component {
         el.textContent = transformedCSS;
         el.kremlings = 1;
         el.kremlingAttr = kremlingSelector;
+        el.kremlingValue = this.kremlingAttrValue;
         document.head.appendChild(el);
         styleTags[props.css] = el;
-        this.styleRef = existingDomEl;
+        this.styleRef = el;
       }
     }
   }
