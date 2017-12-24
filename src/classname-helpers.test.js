@@ -25,10 +25,10 @@ describe("Classname helpers", function() {
   it("should maybe and always return through a chain", function() {
     expect(
       maybe("krimp", true)
-        .always('kannon')
+        .always("kannon")
         .maybe("klaptrap", false)
         .maybe("klank", true)
-        .always('kloak')
+        .always("kloak")
         .toString()
     ).toBe("krimp kannon klank kloak");
   });
