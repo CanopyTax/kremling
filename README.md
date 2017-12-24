@@ -62,6 +62,7 @@ class KremlingKrew extends React.Component {
 
 ## API
 
+### <Scoped />
 `Scoped` - A React Component which requires a `css` prop. The
   CSS rules defined in that property will be avaible only to children
   of the rendered `Scoped` Component. Scoped CSS rules must begin
@@ -70,6 +71,8 @@ class KremlingKrew extends React.Component {
   The `Scoped` Component optionally takes a `namespace` prop which
   defines a custom namespace for scoping your CSS.
 
+### always
 `always(String)` or `a(String)` - Always return the string passes.
 
+### maybe
 `maybe(String, Boolean)` or `m(String, Boolean)` - Conditionally return the String depending on if the second parameter is truthy.

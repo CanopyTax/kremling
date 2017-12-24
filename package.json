@@ -27,6 +27,7 @@
   "scripts": {
     "prepublish": "yarn compile",
     "test": "karma start --single-run",
+    "build": "npm run compile",
     "compile": "babel src --out-dir lib --source-maps"
   },
   "dependencies": {
