@@ -32,4 +32,9 @@ describe("Classname helpers", function() {
         .toString()
     ).toBe("krimp kannon klank kloak");
   });
+
+  it("should throw when a non string is passed", function() {
+    expect(() => maybe(2)).toThrow();
+    expect(() => always('dk').maybe(2)).toThrow();
+  });
 });

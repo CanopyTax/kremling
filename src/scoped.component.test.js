@@ -57,6 +57,41 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
+  it("should recycle style tags that have the same CSS", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el1 = document.createElement("div");
+    const el2 = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Hello</div>
+        </Scoped>
+      </div>,
+      el1
+    );
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Hello</div>
+        </Scoped>
+      </div>,
+      el2
+    );
+
+    expect(document.querySelectorAll("style").length).toBe(1);
+    ReactDOM.unmountComponentAtNode(el1);
+    expect(document.querySelectorAll("style").length).toBe(1);
+    ReactDOM.unmountComponentAtNode(el2);
+    expect(document.querySelectorAll("style").length).toBe(0);
+  });
+
   it("should dynamically create a style tag with global CSS", function() {
     const css = `
       .someRule {
@@ -106,11 +141,34 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
       `
-      [data-kackle="3"] .someRule, [data-kackle="3"].someRule {
+      [data-kackle="4"] .someRule, [data-kackle="4"].someRule {
         background-color: red;
       }
     `.trim()
     );
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
+  it("should pass through non element children", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} namespace="kackle">
+          5
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(el.innerHTML).toBe('<div>5</div>')
 
     ReactDOM.unmountComponentAtNode(el);
   });
