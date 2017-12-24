@@ -4,9 +4,8 @@ import ReactDOM from "react-dom";
 import { Scoped } from "./scoped.component.js";
 
 describe("<Scoped />", function() {
-
   it("should generate and cleanup style tags", function() {
-    expect(document.querySelectorAll('style').length).toBe(0);
+    expect(document.querySelectorAll("style").length).toBe(0);
     const css = `
       & .someRule {
         background-color: red;
@@ -23,10 +22,10 @@ describe("<Scoped />", function() {
       </div>,
       el
     );
-    expect(document.querySelectorAll('style').length).toBe(1);
+    expect(document.querySelectorAll("style").length).toBe(1);
 
     ReactDOM.unmountComponentAtNode(el);
-    expect(document.querySelectorAll('style').length).toBe(0);
+    expect(document.querySelectorAll("style").length).toBe(0);
   });
 
   it("should dynamically create a style tag with local CSS", function() {
@@ -47,11 +46,13 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll('style')[0].innerHTML.trim()).toBe(`
+    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+      `
       [data-kremling="1"] .someRule, [data-kremling="1"].someRule {
         background-color: red;
       }
-    `.trim());
+    `.trim()
+    );
 
     ReactDOM.unmountComponentAtNode(el);
   });
@@ -74,11 +75,13 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll('style')[0].innerHTML.trim()).toBe(`
+    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+      `
       .someRule {
         background-color: red;
       }
-    `.trim());
+    `.trim()
+    );
 
     ReactDOM.unmountComponentAtNode(el);
   });
@@ -101,11 +104,13 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll('style')[0].innerHTML.trim()).toBe(`
+    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+      `
       [data-kackle="3"] .someRule, [data-kackle="3"].someRule {
         background-color: red;
       }
-    `.trim());
+    `.trim()
+    );
 
     ReactDOM.unmountComponentAtNode(el);
   });
