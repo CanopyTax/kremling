@@ -1,0 +1,13 @@
+dist: trusty
+addons:
+  chrome: stable
+language: node_js
+node_js:
+  - "8.9.0"
+before_script:
+  - npm install
+  - npm install -g codecov
+  - npm run build
+script:
+  - npm run test
+  - codecov
