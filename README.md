@@ -46,7 +46,7 @@ class KremlingKrew extends React.Component {
       <div>
         <Scoped css={css}>
           <div className="card">King K. Rool</div>
-          <div className={always("card").maybe("fear", this.gotBananas)}>
+          <div className={always("card").maybe("fear", this.state.gotBananas)}>
             DK
           </div>
         </Scoped>
