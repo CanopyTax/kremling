@@ -16,10 +16,10 @@ function chainify(previousString, newString) {
   const existing = previousString instanceof String ? previousString.toString() : '';
   const str = new String([existing, newString].join(' ').trim());
   str.css = css.bind(str);
-  str.c = css.bind(str);
+  str.c = str.css;
   str.always = always.bind(str);
-  str.a = always.bind(str);
+  str.a = str.always;
   str.maybe = maybe.bind(str);
-  str.m = maybe.bind(str)
+  str.m = str.maybe;
   return str;
 }
