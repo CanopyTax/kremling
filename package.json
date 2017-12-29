@@ -23,13 +23,14 @@
     "puppeteer": "^0.13.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "rimraf": "^2.6.2",
     "webpack": "^3.10.0"
   },
   "scripts": {
     "prepublish": "yarn compile",
     "test": "karma start --single-run",
     "build": "npm run compile",
-    "compile": "babel src --out-dir lib --source-maps"
+    "compile": "rimraf lib && babel src --out-dir lib --source-maps --ignore test.js"
   },
   "dependencies": {}
 }

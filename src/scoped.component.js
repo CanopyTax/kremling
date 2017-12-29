@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 const styleTags = {};
 let counter = 0;
 
+const reactVersion = Number(React.version.slice(0, React.version.indexOf('.')));
+const reactSupportsMultipleChildren = reactVersion >= 16;
+
 export class Scoped extends React.Component {
   static propTypes = {
     css: PropTypes.string.isRequired,
@@ -48,13 +51,24 @@ export class Scoped extends React.Component {
     }
   }
   render() {
-    return React.Children.map(this.props.children, child => {
+    const kremlingChildren = React.Children.map(this.props.children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, {[this.kremlingAttrName]: this.kremlingAttrValue});
       } else {
         return child;
       }
     });
+
+    if (reactSupportsMultipleChildren) {
+      return kremlingChildren;
+    } else {
+      // React 15 or below
+      if (kremlingChildren.length > 1) {
+        throw new Error(`kremling's <Scoped /> component requires exactly one child element unless you are using react@>=16`);
+      } else {
+        return kremlingChildren[0];
+      }
+    }
   }
   componentWillUnmount() {
     if (--this.styleRef.kremlings === 0) {
