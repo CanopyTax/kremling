@@ -88,7 +88,7 @@ export class Scoped extends React.Component {
       el.setAttribute('type', 'text/css');
       el.textContent = transformedCSS;
       el.kremlings = 1;
-      el.kremlingAttr = kremlingSelector;
+      el.kremlingAttr = kremlingAttrName;
       el.kremlingValue = kremlingAttrValue;
       document.head.appendChild(el);
       styleTags[props.css] = el;
