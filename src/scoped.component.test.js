@@ -57,6 +57,35 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
+  it("should dynamically create a style local CSS for non class/id selector", function() {
+    const css = `
+      & div {
+        background-color: pink;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Ahoy hoy</div>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+      `
+      [data-kremling="1"] div, div[data-kremling="1"] {
+        background-color: pink;
+      }
+    `.trim()
+    );
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
   it("should recycle style tags that have the same CSS", function() {
     const css = `
       & .someRule {
