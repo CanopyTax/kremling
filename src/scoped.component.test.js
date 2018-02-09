@@ -1,11 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { Scoped } from "./scoped.component.js";
+import { Scoped, resetCounter } from "./scoped.component.js";
 
 describe("<Scoped />", function() {
+  beforeEach(() => {
+    resetCounter()
+  })
+
   it("should generate and cleanup style tags", function() {
-    expect(document.querySelectorAll("style").length).toBe(0);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
     const css = `
       & .someRule {
         background-color: red;
@@ -22,10 +26,10 @@ describe("<Scoped />", function() {
       </div>,
       el
     );
-    expect(document.querySelectorAll("style").length).toBe(1);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(1);
 
     ReactDOM.unmountComponentAtNode(el);
-    expect(document.querySelectorAll("style").length).toBe(0);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
   });
 
   it("should dynamically create a style tag with local CSS", function() {
@@ -46,9 +50,9 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="1"] .someRule, [data-kremling="1"].someRule {
+      [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -75,9 +79,9 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+    expect(document.querySelectorAll('style[type="text/css"]')[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="1"] div, div[data-kremling="1"] {
+      [data-kremling="0"] div, div[data-kremling="0"] {
         background-color: pink;
       }
     `.trim()
@@ -114,11 +118,11 @@ describe("<Scoped />", function() {
       el2
     );
 
-    expect(document.querySelectorAll("style").length).toBe(1);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(1);
     ReactDOM.unmountComponentAtNode(el1);
-    expect(document.querySelectorAll("style").length).toBe(1);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(1);
     ReactDOM.unmountComponentAtNode(el2);
-    expect(document.querySelectorAll("style").length).toBe(0);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
   });
 
   it("should dynamically create a style tag with global CSS", function() {
@@ -139,7 +143,7 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
       .someRule {
         background-color: red;
@@ -168,9 +172,9 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(document.querySelectorAll("style")[0].innerHTML.trim()).toBe(
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kackle="4"] .someRule, [data-kackle="4"].someRule {
+      [data-kackle="0"] .someRule, [data-kackle="0"].someRule {
         background-color: red;
       }
     `.trim()

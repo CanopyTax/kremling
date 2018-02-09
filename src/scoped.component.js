@@ -117,3 +117,8 @@ export class Scoped extends React.Component {
     }
   }
 }
+
+// For tests
+export function resetCounter() {
+  counter = 0;
+}
