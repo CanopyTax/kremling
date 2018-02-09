@@ -80,7 +80,14 @@ export class Scoped extends React.Component {
       const kremlingSelector = `[${kremlingAttrName}="${kremlingAttrValue}"]`;
       const transformedCSS = props.css.replace(/& (.+){/g, (match, cssRule) => {
         cssRule = cssRule.trim();
-        return `${kremlingSelector} ${cssRule}, ${kremlingSelector}${cssRule} {`;
+        let builtIn = false;
+          if ( ! (/^([.#]\w+)/).test(cssRule)) {
+           builtIn = true;
+          }
+          // if it's not a built-in selector, prepend the data attribute. Otherwise, append
+          return ! builtIn
+            ? `${kremlingSelector} ${cssRule}, ${kremlingSelector}${cssRule} {`
+            : `${kremlingSelector} ${cssRule}, ${cssRule}${kremlingSelector} {`;
       });
 
       // The dom element
