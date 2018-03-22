@@ -1,6 +1,6 @@
 {
   "name": "kremling",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Embarrassingly simple css for React",
   "main": "lib/kremling.js",
   "repository": "git@github.com:CanopyTax/kremling.git",
