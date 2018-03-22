@@ -61,7 +61,7 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
-  it("should create local CSS for combined CSS statements", function() {
+  it("should create local CSS for combined CSS statements & with regular", function() {
     const css = `
       & .someRule, .wow {
         background-color: red;
@@ -90,7 +90,7 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
-  it("should create local CSS for combined CSS statements", function() {
+  it("should create local CSS for combined CSS statements regular with &", function() {
     const css = `
       .wow, & .someRule {
         background-color: red;
