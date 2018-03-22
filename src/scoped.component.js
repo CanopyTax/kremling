@@ -79,15 +79,26 @@ export class Scoped extends React.Component {
       // The css to append to the dom
       const kremlingSelector = `[${kremlingAttrName}="${kremlingAttrValue}"]`;
       const transformedCSS = props.css.replace(/& (.+){/g, (match, cssRule) => {
-        cssRule = cssRule.trim();
-        let builtIn = false;
-          if ( ! (/^([.#]\w+)/).test(cssRule)) {
-           builtIn = true;
-          }
-          // if it's not a built-in selector, prepend the data attribute. Otherwise, append
-          return ! builtIn
-            ? `${kremlingSelector} ${cssRule}, ${kremlingSelector}${cssRule} {`
-            : `${kremlingSelector} ${cssRule}, ${cssRule}${kremlingSelector} {`;
+        return match
+          .split(",") // multiple rules on the same line split by a comma
+          .map(cssSplit => {
+            cssSplit = cssSplit.trim();
+
+            // ignore css rules that don't begin with '&'
+            if (cssSplit.indexOf('&') === -1) return cssSplit.replace('{', '').trim();
+
+            cssSplit = (/[^&](.+)[^{]+/g).exec(cssSplit)[0].trim();
+
+            let builtIn = false;
+            if (!/^([.#]\w+)/.test(cssSplit)) {
+              builtIn = true;
+            }
+            // if it's not a built-in selector, prepend the data attribute. Otherwise, append
+            return !builtIn
+              ? `${kremlingSelector} ${cssSplit}, ${kremlingSelector}${cssSplit}`
+              : `${kremlingSelector} ${cssSplit}, ${cssSplit}${kremlingSelector}`;
+          })
+          .join(", ") + ' {';
       });
 
       // The dom element
