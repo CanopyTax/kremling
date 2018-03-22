@@ -61,6 +61,93 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
+  it("should create local CSS for combined CSS statements", function() {
+    const css = `
+      & .someRule, .wow {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Hello</div>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
+      `
+      [data-kremling="0"] .someRule, [data-kremling="0"].someRule, .wow {
+        background-color: red;
+      }
+    `.trim()
+    );
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
+  it("should create local CSS for combined CSS statements", function() {
+    const css = `
+      .wow, & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Hello</div>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
+      `
+      .wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+        background-color: red;
+      }
+    `.trim()
+    );
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
+  it("should create local CSS for combined CSS statements", function() {
+    const css = `
+      & .wow, & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css}>
+          <div>Hello</div>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
+      `
+      [data-kremling="0"] .wow, [data-kremling="0"].wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+        background-color: red;
+      }
+    `.trim()
+    );
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
   it("should dynamically create a style local CSS for non class/id selector", function() {
     const css = `
       & div {
@@ -205,4 +292,5 @@ describe("<Scoped />", function() {
 
     ReactDOM.unmountComponentAtNode(el);
   });
+
 });
