@@ -78,7 +78,7 @@ export class Scoped extends React.Component {
 
       // The css to append to the dom
       const kremlingSelector = `[${kremlingAttrName}="${kremlingAttrValue}"]`;
-      const transformedCSS = props.css.replace(/& (.+){/g, (match, cssRule) => {
+      const transformedCSS = props.css.replace(/& ([^{}])+{/g, (match, cssRule) => {
         return match
           .split(",") // multiple rules on the same line split by a comma
           .map(cssSplit => {
