@@ -25,7 +25,7 @@ Embarrassingly simple css for React
 ### Scoped CSS
 ```js
 import React from "react";
-import { Scoped, always, maybe } from "kremling";
+import { Scoped, always, maybe, toggle } from "kremling";
 
 const css = `
   & .card {
@@ -34,7 +34,15 @@ const css = `
   }
 
   & .fear {
-    display: none;
+    background-color: red;
+  }
+
+  & .fight {
+    font-weight: bold;
+  }
+
+  & .flight {
+    font-style: italic;
   }
 `;
 
@@ -47,7 +55,9 @@ class KremlingKrew extends React.Component {
         <Scoped css={css}>
           <div className="card">King K. Rool</div>
           <div className={always("card").maybe("fear", this.state.gotBananas)}>
-            DK
+            <span className={toggle("flight", "fight", this.state.gotBananas)}>
+              DK
+            </span>
           </div>
         </Scoped>
         <div className="card">
@@ -65,7 +75,7 @@ class KremlingKrew extends React.Component {
 ### `<Scoped />`
 
 A React Component which requires a `css` prop. The
-CSS rules defined in that property will be avaible only to children
+CSS rules defined in that property will be available only to children
 of the rendered `Scoped` Component. Scoped CSS rules must begin
 with an `&`.
 
@@ -77,3 +87,6 @@ defines a custom namespace for scoping your CSS.
 
 ### `maybe`
 `maybe(String, Boolean)` or `m(String, Boolean)` - Conditionally return the String depending on if the second parameter is truthy.
+
+### `toggle`
+`toggle(String, String, Boolean)` or `t(String, String, Boolean)` - Returns the first String if the third parameter is truthy or the second String if the third parameter is falsy.
