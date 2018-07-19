@@ -9,7 +9,8 @@ const reactSupportsReturningArrays = !!ReactDOM.createPortal;
 
 export class Scoped extends React.Component {
   static propTypes = {
-    css: PropTypes.string.isRequired,
+    css: PropTypes.string,
+    postcss: PropTypes.object,
     namespace: PropTypes.string,
   }
 
@@ -17,13 +18,26 @@ export class Scoped extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = this.newCssState(props);
+    if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
+    if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
+    if (props.postcss && !(props.postcss.styles && props.postcss.id)) throw Error(`Kremlings's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
+    if (props.css) {
+      this.state = this.newCssState(props);
+    } else {
+      this.state = this.newPostcssState(props);
+    }
   }
 
   render() {
     const kremlingChildren = React.Children.map(this.props.children, child => {
       if (React.isValidElement(child)) {
-        return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
+        let elProps;
+        if (this.props.css) {
+          elProps = { [this.state.kremlingAttrName]: this.state.kremlingAttrValue };
+        } else {
+          elProps = { className: `${this.props.postcss.id} ${child.props && child.props.className ? child.props.className : ''}` };
+        }
+        return React.cloneElement(child, elProps);
       } else {
         return child;
       }
@@ -43,15 +57,25 @@ export class Scoped extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    if (this.state.css !== this.props.css) {
-      this.doneWithCss();
-      this.setState(this.newCssState(this.props))
+  componentDidUpdate(prevProps) {
+    if (this.props.css) {
+      if (this.state.css !== this.props.css) {
+        this.doneWithCss();
+        this.setState(this.newCssState(this.props))
+      }
+    } else {
+      if (prevProps.postcss.id !== this.props.postcss.id) {
+        this.updatePostcssStyle(prevProps.postcss, this.props.postcss);
+      }
     }
   }
 
   componentWillUnmount() {
-    this.doneWithCss();
+    if (this.props.css) {
+      this.doneWithCss();
+    } else {
+      this.reducePostcssCounter();
+    }
   }
 
   newCssState(props) {
@@ -125,6 +149,48 @@ export class Scoped extends React.Component {
     if (this.state.styleRef && --this.state.styleRef.kremlings === 0) {
       this.state.styleRef.parentNode.removeChild(this.state.styleRef);
       delete styleTags[this.props.css];
+    }
+  }
+
+  getPostcssSelector = (id) => {
+    return `style_${id.slice(1)}`;
+  }
+
+  newPostcssState = (props) => {
+    // check if we need to add the style to the head
+    let styleRef = document.head.querySelector(`.${this.getPostcssSelector(this.props.postcss.id)}`);
+    // there's no style - create a new one and add it to the head
+    if (!styleRef) {
+      const style = document.createElement('style');
+      style.setAttribute('class', this.getPostcssSelector(this.props.postcss.id));
+      style.setAttribute('type', 'text/css');
+      style.innerHTML = props.postcss.styles;
+      style.counter = 1;
+      document.head.appendChild(style);
+      styleRef = style;
+    }
+    // there is a style - update the counter property
+    else {
+      styleRef.counter = styleRef.counter + 1;
+    }
+    return { styleRef }
+  }
+
+  updatePostcssStyle = (oldPostcss, newPostcss) => {
+    // check if another component already updated it
+    if (!this.state.styleRef.classList.contains(this.getPostcssSelector(newPostcss.id))) {
+      this.state.styleRef.classList.replace(
+        this.getPostcssSelector(oldPostcss.id),
+        this.getPostcssSelector(newPostcss.id)
+      );
+      this.state.styleRef.innerHTML = newPostcss.styles;  
+    }
+  }
+
+  reducePostcssCounter = () => {
+    this.state.styleRef.counter = this.state.styleRef.counter - 1;
+    if (this.state.styleRef.counter === 0) {
+      this.state.styleRef.remove();
     }
   }
 }
