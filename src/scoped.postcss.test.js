@@ -1,23 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
 import { Scoped } from "./scoped.component.js";
-
-function getSelectorFromId(id) {
-  return `style_${id.slice(1)}`
-}
 
 describe('<Scoped postcss />', function() {
   beforeEach(() => {
     document.head.innerHTML = '';
-  })
-
+  });
 
   it("should generate and cleanup style tags", function() {
     expect(document.head.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
     const css = {
-      id: '.kremling_id_1',
-      styles: `.kremling_id_1 .someRule, .kremling_id_1.someRule {background-color: red;}`,
+      id: 1,
+      styles: `[data-kremling="1"] .someRule, [data-kremling="1"].someRule {background-color: red;}`,
     }
     const el = document.createElement('div');
     ReactDOM.render(
@@ -34,8 +28,8 @@ describe('<Scoped postcss />', function() {
 
   it('should create a <style> tag with postcss styles', function() {
     const css = {
-      id: '.kremling_id_1',
-      styles: `.kremling_id_1 .someRule, .kremling_id_1.someRule {background-color: red;}`,
+      id: 1,
+      styles: `[data-kremling="1"] .someRule, [data-kremling="1"].someRule {background-color: red;}`,
     }
     const el = document.createElement('div');
     ReactDOM.render(
@@ -46,27 +40,40 @@ describe('<Scoped postcss />', function() {
       </div>,
       el
     );
-    expect(document.head.querySelector(`.${getSelectorFromId(css.id)}`).innerHTML).toBe(css.styles);
+    expect(document.head.querySelector(`[data-kremling="${css.id}"]`).innerHTML).toBe(css.styles);
   });
 
 
-  it('should update <style> tag className and styles on change', function() {
-    let css = { id: '.kremling_id_1', styles: `.kremling_id_1 .someRule, .kremling_id_1.someRule {background-color: red;}` };
+  it('when webpack updates its styles, component should update the data-kremling attribute and inner css', function() {
+    let css = { id: '1', styles: `[data-kremling-1] .someRule, [data-kremling-1].someRule {background-color: red;}` };
     const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
 
     const el = document.createElement('div');
     ReactDOM.render(component(css), el);
-    expect(document.head.querySelector('style').classList.contains(getSelectorFromId(css.id))).toBe(true);
+    expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('1');
 
     // update css
-    css = { id: '.kremling_id_2', styles: `.kremling_id_2 .someRule, .kremling_id_2.someRule {background-color: green;}` };
+    css = { id: '2', styles: `[data-kremling-2] .someRule, [data-kremling-2].someRule {background-color: green;}` };
     ReactDOM.render(component(css), el);
-    expect(document.head.querySelector('style').classList.contains(getSelectorFromId(css.id))).toBe(true);
+    expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('2');
   });
 
+  it('when the user updates its id, component should update <style> data-kremling attribute', function() {
+    let css = { id: '1', styles: `[data-kremling-1] .someRule, [data-kremling-1].someRule {background-color: red;}` };
+    const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
+
+    const el = document.createElement('div');
+    ReactDOM.render(component(css), el);
+    expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('1');
+
+    // update css
+    css = { id: 'custom-id', styles: `[data-kremling-1] .someRule, [data-kremling-1].someRule {background-color: red;}` };
+    ReactDOM.render(component(css), el);
+    expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('custom-id');
+  });
 
   it('should increment/decrement <style> counter when there\'s multiples of the same component', function() {
-    const css = { id: '.kremling_id_1', styles: `.kremling_id_1 .someRule, .kremling_id_1.someRule {background-color: red;}` };
+    const css = { id: '1', styles: `[data-kremling="1"] .someRule, [data-kremling="1"].someRule {background-color: red;}` };
 
     const el1 = document.createElement('div');
     const el2 = document.createElement('div');

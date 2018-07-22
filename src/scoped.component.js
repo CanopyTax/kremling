@@ -31,14 +31,8 @@ export class Scoped extends React.Component {
   render() {
     const kremlingChildren = React.Children.map(this.props.children, child => {
       if (React.isValidElement(child)) {
-        let elProps;
-        if (this.props.css) {
-          elProps = { [this.state.kremlingAttrName]: this.state.kremlingAttrValue };
+        return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
         } else {
-          elProps = { className: `${this.props.postcss.id} ${child.props && child.props.className ? child.props.className : ''}` };
-        }
-        return React.cloneElement(child, elProps);
-      } else {
         return child;
       }
     });
@@ -64,8 +58,11 @@ export class Scoped extends React.Component {
         this.setState(this.newCssState(this.props))
       }
     } else {
-      if (prevProps.postcss.id !== this.props.postcss.id) {
-        this.updatePostcssStyle(prevProps.postcss, this.props.postcss);
+      if (prevProps.postcss.id !== this.props.postcss.id
+        || prevProps.postcss.styles !== this.props.postcss.styles
+        || prevProps.postcss.namespace !== this.props.postcss.namespace) {
+        this.doneWithPostss();
+        this.setState(this.newPostcssState(this.props));
       }
     }
   }
@@ -74,7 +71,7 @@ export class Scoped extends React.Component {
     if (this.props.css) {
       this.doneWithCss();
     } else {
-      this.reducePostcssCounter();
+      this.doneWithPostss();
     }
   }
 
@@ -152,47 +149,36 @@ export class Scoped extends React.Component {
     }
   }
 
-  getPostcssSelector = (id) => {
-    return `style_${id.slice(1)}`;
+  doneWithPostss = () => {
+    this.state.styleRef.counter -= 1;
+    if (this.state.styleRef.counter === 0) {
+      this.state.styleRef.parentNode.removeChild(this.state.styleRef);
+    }
   }
 
   newPostcssState = (props) => {
-    // check if we need to add the style to the head
-    let styleRef = document.head.querySelector(`.${this.getPostcssSelector(this.props.postcss.id)}`);
-    // there's no style - create a new one and add it to the head
+    const kremlingAttrName = props.postcss.namespace || 'data-kremling';
+    const kremlingAttrValue = props.postcss.id;
+    let styleRef = document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
     if (!styleRef) {
       const style = document.createElement('style');
-      style.setAttribute('class', this.getPostcssSelector(this.props.postcss.id));
+      style.setAttribute(kremlingAttrName, kremlingAttrValue);
       style.setAttribute('type', 'text/css');
       style.innerHTML = props.postcss.styles;
       style.counter = 1;
       document.head.appendChild(style);
       styleRef = style;
     }
-    // there is a style - update the counter property
     else {
       styleRef.counter = styleRef.counter + 1;
     }
-    return { styleRef }
-  }
-
-  updatePostcssStyle = (oldPostcss, newPostcss) => {
-    // check if another component already updated it
-    if (!this.state.styleRef.classList.contains(this.getPostcssSelector(newPostcss.id))) {
-      this.state.styleRef.classList.replace(
-        this.getPostcssSelector(oldPostcss.id),
-        this.getPostcssSelector(newPostcss.id)
-      );
-      this.state.styleRef.innerHTML = newPostcss.styles;  
+    return {
+      kremlingAttrName,
+      kremlingAttrValue,
+      styleRef
     }
   }
 
-  reducePostcssCounter = () => {
-    this.state.styleRef.counter = this.state.styleRef.counter - 1;
-    if (this.state.styleRef.counter === 0) {
-      this.state.styleRef.remove();
-    }
-  }
 }
 
 // For tests
