@@ -18,6 +18,7 @@ export class Scoped extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {};
     if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
     if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
     if (props.postcss && !(props.postcss.styles && props.postcss.id)) throw Error(`Kremlings's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
@@ -61,7 +62,7 @@ export class Scoped extends React.Component {
       if (prevProps.postcss.id !== this.props.postcss.id
         || prevProps.postcss.styles !== this.props.postcss.styles
         || prevProps.postcss.namespace !== this.props.postcss.namespace) {
-        this.doneWithPostss();
+        this.doneWithPostcss();
         this.setState(this.newPostcssState(this.props));
       }
     }
@@ -71,7 +72,7 @@ export class Scoped extends React.Component {
     if (this.props.css) {
       this.doneWithCss();
     } else {
-      this.doneWithPostss();
+      this.doneWithPostcss();
     }
   }
 
@@ -149,7 +150,7 @@ export class Scoped extends React.Component {
     }
   }
 
-  doneWithPostss = () => {
+  doneWithPostcss = () => {
     this.state.styleRef.counter -= 1;
     if (this.state.styleRef.counter === 0) {
       this.state.styleRef.parentNode.removeChild(this.state.styleRef);
@@ -159,7 +160,12 @@ export class Scoped extends React.Component {
   newPostcssState = (props) => {
     const kremlingAttrName = props.postcss.namespace || 'data-kremling';
     const kremlingAttrValue = props.postcss.id;
-    let styleRef = document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
+    let styleRef;
+    if (this.state.styleRef && this.state.styleRef.counter) {
+      styleRef = this.state.styleRef;
+    } else {
+      styleRef = document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
+    }
     if (!styleRef) {
       const style = document.createElement('style');
       style.setAttribute(kremlingAttrName, kremlingAttrValue);

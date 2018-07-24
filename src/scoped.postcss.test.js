@@ -24,8 +24,8 @@ describe('<Scoped postcss />', function() {
     ReactDOM.unmountComponentAtNode(el);
     expect(document.head.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
   });
-
-
+  
+  
   it('should create a <style> tag with postcss styles', function() {
     const css = {
       id: 1,
@@ -61,23 +61,23 @@ describe('<Scoped postcss />', function() {
   it('when the user updates its id, component should update <style> data-kremling attribute', function() {
     let css = { id: '1', styles: `[data-kremling-1] .someRule, [data-kremling-1].someRule {background-color: red;}` };
     const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
-
+  
     const el = document.createElement('div');
     ReactDOM.render(component(css), el);
     expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('1');
-
+  
     // update css
     css = { id: 'custom-id', styles: `[data-kremling-1] .someRule, [data-kremling-1].someRule {background-color: red;}` };
     ReactDOM.render(component(css), el);
     expect(document.head.querySelector('style').getAttribute('data-kremling')).toBe('custom-id');
   });
-
+  
   it('should increment/decrement <style> counter when there\'s multiples of the same component', function() {
     const css = { id: '1', styles: `[data-kremling="1"] .someRule, [data-kremling="1"].someRule {background-color: red;}` };
-
+  
     const el1 = document.createElement('div');
     const el2 = document.createElement('div');
-
+  
     ReactDOM.render(
       <div>
         <Scoped postcss={css}>
@@ -87,7 +87,7 @@ describe('<Scoped postcss />', function() {
       el1
     );
     expect(document.head.querySelector('style').counter).toBe(1);
-
+  
     ReactDOM.render(
       <div>
         <Scoped postcss={css}>
