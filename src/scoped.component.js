@@ -33,7 +33,7 @@ export class Scoped extends React.Component {
     const kremlingChildren = React.Children.map(this.props.children, child => {
       if (React.isValidElement(child)) {
         return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
-        } else {
+      } else {
         return child;
       }
     });
