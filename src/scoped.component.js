@@ -160,24 +160,17 @@ export class Scoped extends React.Component {
   newPostcssState = (props) => {
     const kremlingAttrName = props.postcss.namespace || 'data-kremling';
     const kremlingAttrValue = props.postcss.id;
-    let styleRef;
-    if (this.state.styleRef && this.state.styleRef.counter) {
-      styleRef = this.state.styleRef;
-    } else {
-      styleRef = document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
-    }
+    let styleRef = this.state.styleRef || document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
     if (!styleRef) {
-      const style = document.createElement('style');
-      style.setAttribute(kremlingAttrName, kremlingAttrValue);
-      style.setAttribute('type', 'text/css');
-      style.innerHTML = props.postcss.styles;
-      style.counter = 1;
-      document.head.appendChild(style);
-      styleRef = style;
+      styleRef = document.createElement('style');
+      styleRef.setAttribute('type', 'text/css');
+      styleRef.counter = 1;
+    } else {
+      styleRef.counter += 1;
     }
-    else {
-      styleRef.counter = styleRef.counter + 1;
-    }
+    styleRef.setAttribute(kremlingAttrName, kremlingAttrValue);
+    styleRef.innerHTML = props.postcss.styles;
+    document.head.appendChild(styleRef);
     return {
       kremlingAttrName,
       kremlingAttrValue,
