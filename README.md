@@ -72,21 +72,30 @@ class KremlingKrew extends React.Component {
 
 ## API
 
-### `<Scoped />`
+## `<Scoped />`
 
-A React Component which requires a `css` prop. The
-CSS rules defined in that property will be available only to children
-of the rendered `Scoped` Component. Scoped CSS rules must begin
-with an `&`.
+A React Component which requires a `css` or `postcss` prop.
+The CSS rules defined in either of these properties will be available only to children
+of the rendered `Scoped` Component.
 
-The `Scoped` Component optionally takes a `namespace` prop which
-defines a custom namespace for scoping your CSS.
+#### `css` prop {string}
 
-### `always`
+Scoped CSS rules. All selectors must begin with an `&`. See above example.
+
+#### `namespace` prop {string} *Optional*
+
+Define a custom namespace for scoping your CSS.
+
+#### `postcss` prop {object}
+
+An object containing pre-processed css styles and an optional namespace.
+Check out the [`kremling-loader`](https://www.npmjs.com/package/kremling-loader) to learn how to use this.
+
+## `always`
 `always(String)` or `a(String)` - Always return the string passes.
 
-### `maybe`
+## `maybe`
 `maybe(String, Boolean)` or `m(String, Boolean)` - Conditionally return the String depending on if the second parameter is truthy.
 
-### `toggle`
+## `toggle`
 `toggle(String, String, Boolean)` or `t(String, String, Boolean)` - Returns the first String if the third parameter is truthy or the second String if the third parameter is falsy.
