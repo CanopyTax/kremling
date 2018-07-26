@@ -9,7 +9,8 @@ const reactSupportsReturningArrays = !!ReactDOM.createPortal;
 
 export class Scoped extends React.Component {
   static propTypes = {
-    css: PropTypes.string.isRequired,
+    css: PropTypes.string,
+    postcss: PropTypes.object,
     namespace: PropTypes.string,
   }
 
@@ -17,7 +18,15 @@ export class Scoped extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = this.newCssState(props);
+    this.state = {};
+    if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
+    if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
+    if (props.postcss && !(props.postcss.styles && props.postcss.id)) throw Error(`Kremlings's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
+    if (props.css) {
+      this.state = this.newCssState(props);
+    } else {
+      this.state = this.newPostcssState(props);
+    }
   }
 
   render() {
@@ -43,15 +52,28 @@ export class Scoped extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    if (this.state.css !== this.props.css) {
-      this.doneWithCss();
-      this.setState(this.newCssState(this.props))
+  componentDidUpdate(prevProps) {
+    if (this.props.css) {
+      if (this.state.css !== this.props.css) {
+        this.doneWithCss();
+        this.setState(this.newCssState(this.props))
+      }
+    } else {
+      if (prevProps.postcss.id !== this.props.postcss.id
+        || prevProps.postcss.styles !== this.props.postcss.styles
+        || prevProps.postcss.namespace !== this.props.postcss.namespace) {
+        this.doneWithPostcss();
+        this.setState(this.newPostcssState(this.props));
+      }
     }
   }
 
   componentWillUnmount() {
-    this.doneWithCss();
+    if (this.props.css) {
+      this.doneWithCss();
+    } else {
+      this.doneWithPostcss();
+    }
   }
 
   newCssState(props) {
@@ -127,6 +149,35 @@ export class Scoped extends React.Component {
       delete styleTags[this.props.css];
     }
   }
+
+  doneWithPostcss = () => {
+    this.state.styleRef.counter -= 1;
+    if (this.state.styleRef.counter === 0) {
+      this.state.styleRef.parentNode.removeChild(this.state.styleRef);
+    }
+  }
+
+  newPostcssState = (props) => {
+    const kremlingAttrName = props.postcss.namespace || 'data-kremling';
+    const kremlingAttrValue = props.postcss.id;
+    let styleRef = this.state.styleRef || document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
+    if (!styleRef) {
+      styleRef = document.createElement('style');
+      styleRef.setAttribute('type', 'text/css');
+      styleRef.counter = 1;
+    } else {
+      styleRef.counter += 1;
+    }
+    styleRef.setAttribute(kremlingAttrName, kremlingAttrValue);
+    styleRef.innerHTML = props.postcss.styles;
+    document.head.appendChild(styleRef);
+    return {
+      kremlingAttrName,
+      kremlingAttrValue,
+      styleRef
+    }
+  }
+
 }
 
 // For tests
