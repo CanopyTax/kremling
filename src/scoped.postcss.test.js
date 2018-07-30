@@ -102,4 +102,12 @@ describe('<Scoped postcss />', function() {
     ReactDOM.unmountComponentAtNode(el2);
     expect(document.head.querySelector('style')).toBe(null);
   });
+
+  it(`shouldn't throw errors when empty postcss.styles is passed in`, () => {
+    const css = { id: '1', styles: '' };
+    const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
+    const el = document.createElement('div');
+    ReactDOM.render(component(css), el);
+    expect(document.head.querySelector('style').innerHTML).toEqual('');
+  })
 });
