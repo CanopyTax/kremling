@@ -81,8 +81,11 @@ export class Scoped extends React.Component {
       return;
     }
 
-    if (props.css.indexOf('&') < 0 && props.css.trim().length > 0) {
-      console.warn(`Kremling's <Scoped css="..."> css prop should have the '&' character in it to scope the css classes`);
+    if (props.css.indexOf("&") < 0 && props.css.trim().length > 0) {
+      const firstRule = props.css.substring(0, props.css.indexOf("{")).trim();
+      console.warn(
+        `Kremling's <Scoped css="..."> css prop should have the '&' character in it to scope the css classes: ${firstRule}`
+      );
     }
 
     let styleRef, kremlingAttrName, kremlingAttrValue;
