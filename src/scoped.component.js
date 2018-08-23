@@ -29,14 +29,21 @@ export class Scoped extends React.Component {
     }
   }
 
-  render() {
-    const kremlingChildren = React.Children.map(this.props.children, child => {
-      if (React.isValidElement(child)) {
+  addKremlingAttributeToChildren = (children) => {
+    return React.Children.map(children, child => {
+      if (child.type === React.Fragment && React.Fragment) {
+        const fragmentChildren = this.addKremlingAttributeToChildren(child.props.children);
+        return React.cloneElement(child, {}, fragmentChildren);
+      } else if (React.isValidElement(child)) {
         return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
       } else {
         return child;
       }
     });
+  }
+
+  render() {
+    const kremlingChildren = this.addKremlingAttributeToChildren(this.props.children);
 
     if (reactSupportsReturningArrays) {
       return kremlingChildren;
