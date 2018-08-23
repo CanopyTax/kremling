@@ -473,7 +473,6 @@ describe("<Scoped />", function() {
       </div>,
       el
     );
-    console.log(el.innerHTML);
     expect(el.innerHTML).toBe('<div>null</div>');
 
     ReactDOM.unmountComponentAtNode(el);
