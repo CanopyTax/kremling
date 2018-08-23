@@ -31,11 +31,13 @@ export class Scoped extends React.Component {
 
   addKremlingAttributeToChildren = (children) => {
     return React.Children.map(children, child => {
-      if (child.type === React.Fragment && React.Fragment) {
-        const fragmentChildren = this.addKremlingAttributeToChildren(child.props.children);
-        return React.cloneElement(child, {}, fragmentChildren);
-      } else if (React.isValidElement(child)) {
-        return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
+      if (React.isValidElement(child)) {
+        if (child.type === React.Fragment && React.Fragment) {
+          const fragmentChildren = this.addKremlingAttributeToChildren(child.props.children);
+          return React.cloneElement(child, {}, fragmentChildren);
+        } else {
+          return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
+        }
       } else {
         return child;
       }
