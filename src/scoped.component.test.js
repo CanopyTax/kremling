@@ -456,4 +456,27 @@ describe("<Scoped />", function() {
 
   });
 
+  it("returns null if child is null", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} namespace="kackle">
+          null
+        </Scoped>
+      </div>,
+      el
+    );
+    expect(el.innerHTML).toBe('<div>null</div>');
+
+    ReactDOM.unmountComponentAtNode(el);
+
+  })
+
 });
