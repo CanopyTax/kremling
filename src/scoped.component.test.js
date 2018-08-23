@@ -362,4 +362,98 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   });
 
+  it("adds Kremling attribute to React Fragment children", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} namespace="kackle">
+          <React.Fragment>
+            <div id="greeting">Hello</div>
+            <div id="farewell">Bye</div>
+          </React.Fragment>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
+
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
+  it("adds Kremling attribute to nested React Fragment children", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} namespace="kackle">
+          <React.Fragment>
+            <React.Fragment>
+              <React.Fragment>
+                <div id="greeting">Hello</div>
+                <div id="farewell">Bye</div>
+              </React.Fragment>
+            </React.Fragment>
+          </React.Fragment>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
+
+
+    ReactDOM.unmountComponentAtNode(el);
+  });
+
+  it("adds Kremling attribute to mixture of React Fragment and DOM Element children", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} namespace="kackle">
+          <React.Fragment>
+            <div id="greeting">Hello</div>
+            <div id="farewell">Bye</div>
+          </React.Fragment>
+          <div id="color">Blue</div>
+          <React.Fragment>
+            <div id="color2">Green</div>
+          </React.Fragment>
+        </Scoped>
+      </div>,
+      el
+    );
+
+    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#color").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#color2").dataset.kackle).not.toBe(undefined);
+
+    ReactDOM.unmountComponentAtNode(el);
+
+  });
+
 });
