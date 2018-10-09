@@ -479,4 +479,24 @@ describe("<Scoped />", function() {
 
   })
 
+  it("returns null if child is undefined", function() {
+    const css = `
+      & .someRule {
+        background-color: red;
+      }
+    `;
+
+    const el = document.createElement("div");
+
+    ReactDOM.render(
+      <div>
+        <Scoped css={css} />
+      </div>,
+      el
+    );
+    expect(el.innerHTML).toBe('<div></div>');
+
+    ReactDOM.unmountComponentAtNode(el);
+  })
+
 });

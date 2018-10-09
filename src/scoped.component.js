@@ -45,6 +45,14 @@ export class Scoped extends React.Component {
   }
 
   render() {
+    if (
+      this.props.children === undefined ||
+      this.props.children === null ||
+      this.props.children === false
+    ) {
+      return null;
+    }
+
     const kremlingChildren = this.addKremlingAttributeToChildren(this.props.children);
 
     if (reactSupportsReturningArrays) {
