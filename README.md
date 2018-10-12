@@ -97,7 +97,7 @@ Check out the [`kremling-loader`](https://www.npmjs.com/package/kremling-loader)
 #### `maybe`
 `maybe(String, Boolean)` or `m(String, Boolean)` - Conditionally return the String depending on if the second parameter is truthy.
 
-####`toggle`
+#### `toggle`
 `toggle(String, String, Boolean)` or `t(String, String, Boolean)` - Returns the first String if the third parameter is truthy or the second String if the third parameter is falsy.
 
 ## Usage in tests
