@@ -91,11 +91,21 @@ Define a custom namespace for scoping your CSS.
 An object containing pre-processed css styles and an optional namespace.
 Check out the [`kremling-loader`](https://www.npmjs.com/package/kremling-loader) to learn how to use this.
 
-## `always`
+#### `always`
 `always(String)` or `a(String)` - Always return the string passes.
 
-## `maybe`
+#### `maybe`
 `maybe(String, Boolean)` or `m(String, Boolean)` - Conditionally return the String depending on if the second parameter is truthy.
 
-## `toggle`
+####`toggle`
 `toggle(String, String, Boolean)` or `t(String, String, Boolean)` - Returns the first String if the third parameter is truthy or the second String if the third parameter is falsy.
+
+## Usage in tests
+#### Enzyme
+If you're using at least enzyme@3.3.0, you can do `wrapper.find('.myKlass')` and it will work just fine, even if you are using `always().maybe()` inside of the className prop. Enzyme will be able to select the css classes, as of [this commit](https://github.com/airbnb/enzyme/pull/1450)
+that was [released in enzyme@3.3.0](https://github.com/airbnb/enzyme/blob/master/CHANGELOG.md#330)
+
+#### Snapshots
+If you are using snapshots, I would recommend not snapshotting the entire css string passed to the Scoped component. So if you are rendering `<Scoped css={aLongCssString}><div /></Scoped>`, I would recommend
+doing `expect(wrapper.find('div').toMatchSnapshot()` instead of `expect(wrapper).toMatchSnapshot()` so that your snapshots aren't gigantic and less useful. Additionally, in order to make sure that css classes that use
+`always()`, `maybe()`, or `toggle()` are serialized correctly, you should install [jest-string-object-serializer](https://github.com/CanopyTax/jest-string-object-serializer) and then add that to your [snapshotSerializers config](https://jestjs.io/docs/en/configuration.html#snapshotserializers-array-string)
