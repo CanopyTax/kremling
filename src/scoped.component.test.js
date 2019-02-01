@@ -499,4 +499,52 @@ describe("<Scoped />", function() {
     ReactDOM.unmountComponentAtNode(el);
   })
 
+  it("should properly work with dynamically changing css props", function() {
+    class Counter extends React.Component {
+      state = {width: 100};
+      render() {
+        return (
+          <Scoped css={this.getCSS()}>
+            <div id={this.props.id} onClick={this.update.bind(this)}>
+              Hello
+            </div>
+          </Scoped>
+        );
+      }
+      getCSS() {
+        return `
+            & .someRule {
+              width: ${this.state.width}%;
+            }
+        `;
+      }
+      update() {
+        this.setState({width: this.state.width + 10})
+      }
+    }
+
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
+    const el = document.createElement("div");
+    document.body.appendChild(el);
+
+    ReactDOM.render(
+      <div>
+        <Counter id="a" />
+        <Counter id="b" />
+        <Counter id="c" />
+      </div>,
+      el
+    );
+
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(1);
+    el.querySelector('#a').click();
+    el.querySelector('#a').click();
+    el.querySelector('#b').click();
+
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(3);
+
+    ReactDOM.unmountComponentAtNode(el);
+    expect(document.querySelectorAll(`style[type="text/css"]`).length).toBe(0);
+  });
+
 });

@@ -166,7 +166,7 @@ export class Scoped extends React.Component {
   doneWithCss = () => {
     if (this.state.styleRef && --this.state.styleRef.kremlings === 0) {
       this.state.styleRef.parentNode.removeChild(this.state.styleRef);
-      delete styleTags[this.props.css];
+      delete styleTags[this.state.css];
     }
   }
 
