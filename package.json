@@ -21,17 +21,18 @@
     "karma-webpack": "^2.0.9",
     "prop-types": "^15.6.0",
     "puppeteer": "^0.13.0",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "react": "^16.8.0-alpha.1",
+    "react-dom": "^16.8.0-alpha.1",
     "rimraf": "^2.6.2",
     "webpack": "^3.10.0"
   },
   "scripts": {
-    "prepublish": "yarn compile",
+    "prepublish": "yarn build",
     "test": "karma start --single-run",
     "watch-tests": "karma start",
-    "build": "yarn compile",
-    "compile": "rimraf lib && babel src --out-dir lib --source-maps --ignore test.js"
+    "build": "rimraf lib && yarn compile",
+    "watch-build": "yarn compile --watch",
+    "compile": "babel src --out-dir lib --source-maps --ignore test.js"
   },
   "dependencies": {}
 }
