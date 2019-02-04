@@ -1,9 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-
-const styleTags = {};
-let counter = 0;
+import {styleTags, incrementCounter, transformCss} from './style-element-utils.js'
 
 const reactSupportsReturningArrays = !!ReactDOM.createPortal;
 
@@ -116,32 +114,11 @@ export class Scoped extends React.Component {
     } else {
       // The attribute for namespacing the css
       kremlingAttrName = `data-${props.namespace || Scoped.defaultNamespace}`;
-      kremlingAttrValue = counter++;
+      kremlingAttrValue = incrementCounter();
 
       // The css to append to the dom
       const kremlingSelector = `[${kremlingAttrName}="${kremlingAttrValue}"]`;
-      const transformedCSS = props.css.replace(/& ([^{}])+{/g, (match, cssRule) => {
-        return match
-          .split(",") // multiple rules on the same line split by a comma
-          .map(cssSplit => {
-            cssSplit = cssSplit.trim();
-
-            // ignore css rules that don't begin with '&'
-            if (cssSplit.indexOf('&') === -1) return cssSplit.replace('{', '').trim();
-
-            cssSplit = (/[^&](.+)[^{]+/g).exec(cssSplit)[0].trim();
-
-            let builtIn = false;
-            if (!/^([.#]\w+)/.test(cssSplit)) {
-              builtIn = true;
-            }
-            // if it's not a built-in selector, prepend the data attribute. Otherwise, append
-            return !builtIn
-              ? `${kremlingSelector} ${cssSplit}, ${kremlingSelector}${cssSplit}`
-              : `${kremlingSelector} ${cssSplit}, ${cssSplit}${kremlingSelector}`;
-          })
-          .join(", ") + ' {';
-      });
+      const transformedCSS = transformCss(props.css, kremlingSelector)
 
       // The dom element
       const el = document.createElement('style');
@@ -198,9 +175,4 @@ export class Scoped extends React.Component {
     }
   }
 
-}
-
-// For tests
-export function resetCounter() {
-  counter = 0;
 }

@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import { Scoped, resetCounter } from "./scoped.component.js";
+import { Scoped } from "./scoped.component.js";
+import { resetCounter } from './style-element-utils.js'
 
 describe("<Scoped />", function() {
   beforeEach(() => {
