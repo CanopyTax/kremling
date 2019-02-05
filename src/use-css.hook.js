@@ -1,11 +1,11 @@
-import {useEffect, useState} from 'react'
+import {useLayoutEffect, useState} from 'react'
 import {Scoped} from './scoped.component.js'
 import {styleTags, incrementCounter, getCurrentCounter, transformCss} from './style-element-utils.js'
 
 export function useCss(css, overrideNamespace) {
   const [kremlingId, setKremlingId] = useState(getCurrentCounter())
   const isPostCss = css && css.id && css.styles
-  const namespace = overrideNamespace || (isPostCss && isPostCss.namespace) || Scoped.defaultNamespace
+  const namespace = overrideNamespace || (isPostCss && css.namespace) || Scoped.defaultNamespace
   const kremlingAttrName = isPostCss ? namespace : `data-${namespace}`
 
   useStyleElement()
@@ -15,7 +15,7 @@ export function useCss(css, overrideNamespace) {
   }
 
   function useStyleElement() {
-    useEffect(() => {
+    useLayoutEffect(() => {
       let styleElement = isPostCss ? document.head.querySelector(`[${kremlingAttrName}='${kremlingId}']`) : styleTags[css]
 
       if (!styleElement) {
