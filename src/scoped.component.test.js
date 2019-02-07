@@ -8,7 +8,6 @@ describe("<Scoped />", function() {
   beforeEach(() => {
     resetState()
     Array.prototype.slice.call(document.querySelectorAll('style')).forEach(styleElement => {
-      console.log('removing')
       styleElement.remove()
     })
   })
