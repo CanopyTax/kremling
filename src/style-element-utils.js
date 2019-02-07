@@ -2,14 +2,13 @@ let counter = 0;
 
 export const incrementCounter = () => counter++
 
-export const getCurrentCounter = () => counter
-
 // For tests
-export function resetCounter() {
+export function resetState() {
   counter = 0;
+  styleTags = {}
 }
 
-export const styleTags = {};
+export let styleTags = {}
 
 export function transformCss(css, kremlingSelector) {
   return css.replace(/& ([^{}])+{/g, (match, cssRule) => {

@@ -2,11 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import { Scoped } from "./scoped.component.js";
-import { resetCounter } from './style-element-utils.js'
+import { resetState } from './style-element-utils.js'
 
 describe("<Scoped />", function() {
   beforeEach(() => {
-    resetCounter()
+    resetState()
+    Array.prototype.slice.call(document.querySelectorAll('style')).forEach(styleElement => {
+      console.log('removing')
+      styleElement.remove()
+    })
   })
 
   it("should generate and cleanup style tags", function() {
@@ -53,7 +57,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+      [kremling="0"] .someRule, [kremling="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -82,7 +86,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] .someRule, [data-kremling="0"].someRule, .wow {
+      [kremling="0"] .someRule, [kremling="0"].someRule, .wow {
         background-color: red;
       }
     `.trim()
@@ -111,7 +115,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      .wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+      .wow, [kremling="0"] .someRule, [kremling="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -140,7 +144,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] .wow, [data-kremling="0"].wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+      [kremling="0"] .wow, [kremling="0"].wow, [kremling="0"] .someRule, [kremling="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -170,7 +174,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] .wow, [data-kremling="0"].wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+      [kremling="0"] .wow, [kremling="0"].wow, [kremling="0"] .someRule, [kremling="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -205,11 +209,11 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] .wow, [data-kremling="0"].wow, [data-kremling="0"] .someRule, [data-kremling="0"].someRule {
+      [kremling="0"] .wow, [kremling="0"].wow, [kremling="0"] .someRule, [kremling="0"].someRule {
         background-color: red;
       }
 
-      [data-kremling="0"] .oliver, [data-kremling="0"].oliver, [data-kremling="0"] .cromwell, [data-kremling="0"].cromwell {
+      [kremling="0"] .oliver, [kremling="0"].oliver, [kremling="0"] .cromwell, [kremling="0"].cromwell {
         background-color: green;
       }
     `.trim()
@@ -238,7 +242,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll('style[type="text/css"]')[0].innerHTML.trim()).toBe(
       `
-      [data-kremling="0"] div, div[data-kremling="0"] {
+      [kremling="0"] div, div[kremling="0"] {
         background-color: pink;
       }
     `.trim()
@@ -331,7 +335,7 @@ describe("<Scoped />", function() {
 
     expect(document.querySelectorAll(`style[type="text/css"]`)[0].innerHTML.trim()).toBe(
       `
-      [data-kackle="0"] .someRule, [data-kackle="0"].someRule {
+      [kackle="0"] .someRule, [kackle="0"].someRule {
         background-color: red;
       }
     `.trim()
@@ -384,8 +388,8 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
-    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#greeting").getAttribute('kackle')).not.toBe(undefined);
+    expect(el.querySelector("#farewell").getAttribute('kackle')).not.toBe(undefined);
 
 
     ReactDOM.unmountComponentAtNode(el);
@@ -416,8 +420,8 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
-    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#greeting").getAttribute('kackle')).not.toBe(undefined);
+    expect(el.querySelector("#farewell").getAttribute('kackle')).not.toBe(undefined);
 
 
     ReactDOM.unmountComponentAtNode(el);
@@ -448,10 +452,10 @@ describe("<Scoped />", function() {
       el
     );
 
-    expect(el.querySelector("#greeting").dataset.kackle).not.toBe(undefined);
-    expect(el.querySelector("#farewell").dataset.kackle).not.toBe(undefined);
-    expect(el.querySelector("#color").dataset.kackle).not.toBe(undefined);
-    expect(el.querySelector("#color2").dataset.kackle).not.toBe(undefined);
+    expect(el.querySelector("#greeting").getAttribute('kackle')).not.toBe(undefined);
+    expect(el.querySelector("#farewell").getAttribute('kackle')).not.toBe(undefined);
+    expect(el.querySelector("#color").getAttribute('kackle')).not.toBe(undefined);
+    expect(el.querySelector("#color2").getAttribute('kackle')).not.toBe(undefined);
 
     ReactDOM.unmountComponentAtNode(el);
 

@@ -1,0 +1,14 @@
+{
+  "coveragePathIgnorePatterns": ["<rootDir>/node_modules"],
+  "coverageReporters": [
+    "lcov",
+    "text-summary",
+    "text"
+  ],
+  "collectCoverageFrom": ["src/**/*.js"],
+  "transform": {
+    ".*": "./node_modules/babel-jest"
+  },
+  "rootDir": "./",
+  "modulePaths": ["./"]
+}
