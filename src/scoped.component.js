@@ -20,11 +20,8 @@ export class Scoped extends React.Component {
     if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
     if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
     if (props.postcss && !(typeof props.postcss.styles === 'string' && props.postcss.id)) throw Error(`Kremlings's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
-    if (props.css) {
-      this.state = this.newCssState(props);
-    } else {
-      this.state = this.newPostcssState(props);
-    }
+
+    this.state = this.newCssState(props)
   }
 
   addKremlingAttributeToChildren = (children) => {
@@ -34,7 +31,7 @@ export class Scoped extends React.Component {
           const fragmentChildren = this.addKremlingAttributeToChildren(child.props.children);
           return React.cloneElement(child, {}, fragmentChildren);
         } else {
-          return React.cloneElement(child, {[this.state.kremlingAttrName]: this.state.kremlingAttrValue});
+          return React.cloneElement(child, {[this.state.kremlingAttr]: this.state.kremlingAttrValue});
         }
       } else {
         return child;
@@ -46,7 +43,8 @@ export class Scoped extends React.Component {
     if (
       this.props.children === undefined ||
       this.props.children === null ||
-      this.props.children === false
+      this.props.children === false ||
+      this.props.children === true
     ) {
       return null;
     }
@@ -68,111 +66,85 @@ export class Scoped extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.css) {
-      if (this.state.css !== this.props.css) {
-        this.doneWithCss();
-        this.setState(this.newCssState(this.props))
-      }
-    } else {
-      if (prevProps.postcss.id !== this.props.postcss.id
-        || prevProps.postcss.styles !== this.props.postcss.styles
-        || prevProps.postcss.namespace !== this.props.postcss.namespace) {
-        this.doneWithPostcss();
-        this.setState(this.newPostcssState(this.props));
-      }
+    const oldCss = prevProps.postcss || prevProps.css
+    const newCss = this.props.postcss || this.props.css
+    if (
+      oldCss !== newCss ||
+      oldCss.id !== newCss.id ||
+      oldCss.styles !== newCss.styles ||
+      oldCss.namespace !== newCss.namespace
+    ) {
+      this.doneWithCss()
+      this.setState(this.newCssState(this.props))
     }
   }
 
   componentWillUnmount() {
-    if (this.props.css) {
-      this.doneWithCss();
-    } else {
-      this.doneWithPostcss();
+    this.doneWithCss()
+  }
+
+  doneWithCss = () => {
+    if (this.state.styleRef && --this.state.styleRef.kremlings === 0) {
+      delete styleTags[this.state.rawCss];
+      this.state.styleRef.parentNode.removeChild(this.state.styleRef);
     }
   }
 
   newCssState(props) {
-    if (typeof props.css !== 'string') {
-      return;
+    const css = props.postcss || props.css
+    const isPostCss = Boolean(css && css.id)
+    const namespace = isPostCss ? css.namespace : (props.namespace || Scoped.defaultNamespace)
+    const rawCss = isPostCss ? css.styles : css
+
+    let styleRef, kremlingAttr, kremlingAttrValue
+
+    if (!isPostCss) {
+      if (typeof css !== 'string') {
+        return
+      }
+
+      if (css.indexOf("&") < 0 && css.trim().length > 0) {
+        const firstRule = css.substring(0, props.css.indexOf("{")).trim();
+        console.warn(
+          `Kremling's <Scoped css="..."> css prop should have the '&' character in it to scope the css classes: ${firstRule}`
+        );
+      }
     }
 
-    if (props.css.indexOf("&") < 0 && props.css.trim().length > 0) {
-      const firstRule = props.css.substring(0, props.css.indexOf("{")).trim();
-      console.warn(
-        `Kremling's <Scoped css="..."> css prop should have the '&' character in it to scope the css classes: ${firstRule}`
-      );
-    }
-
-    let styleRef, kremlingAttrName, kremlingAttrValue;
-    const existingDomEl = styleTags[props.css];
+    const existingDomEl = styleTags[rawCss];
 
     if (existingDomEl) {
       styleRef = existingDomEl;
       existingDomEl.kremlings++;
-      kremlingAttrName = styleRef.kremlingAttr;
+      kremlingAttr = styleRef.kremlingAttr;
       kremlingAttrValue = styleRef.kremlingValue;
     } else {
       // The attribute for namespacing the css
-      kremlingAttrName = `data-${props.namespace || Scoped.defaultNamespace}`;
+      kremlingAttr = namespace;
       kremlingAttrValue = incrementCounter();
 
       // The css to append to the dom
-      const kremlingSelector = `[${kremlingAttrName}="${kremlingAttrValue}"]`;
-      const transformedCSS = transformCss(props.css, kremlingSelector)
+      const kremlingSelector = `[${kremlingAttr}="${kremlingAttrValue}"]`;
+      const transformedCSS = isPostCss ? rawCss : transformCss(rawCss, kremlingSelector)
 
       // The dom element
       const el = document.createElement('style');
       el.setAttribute('type', 'text/css');
       el.textContent = transformedCSS;
       el.kremlings = 1;
-      el.kremlingAttr = kremlingAttrName;
+      el.kremlingAttr = kremlingAttr;
       el.kremlingValue = kremlingAttrValue;
       document.head.appendChild(el);
-      styleTags[props.css] = el;
+      styleTags[rawCss] = el;
       styleRef = el;
     }
 
     return {
-      css: props.css,
+      isPostCss,
+      rawCss,
       styleRef,
-      kremlingAttrName,
+      kremlingAttr,
       kremlingAttrValue,
     };
   }
-
-  doneWithCss = () => {
-    if (this.state.styleRef && --this.state.styleRef.kremlings === 0) {
-      this.state.styleRef.parentNode.removeChild(this.state.styleRef);
-      delete styleTags[this.state.css];
-    }
-  }
-
-  doneWithPostcss = () => {
-    this.state.styleRef.counter -= 1;
-    if (this.state.styleRef.counter === 0) {
-      this.state.styleRef.parentNode.removeChild(this.state.styleRef);
-    }
-  }
-
-  newPostcssState = (props) => {
-    const kremlingAttrName = props.postcss.namespace || 'data-kremling';
-    const kremlingAttrValue = props.postcss.id;
-    let styleRef = this.state.styleRef || document.head.querySelector(`[${kremlingAttrName}="${kremlingAttrValue}"]`);
-    if (!styleRef) {
-      styleRef = document.createElement('style');
-      styleRef.setAttribute('type', 'text/css');
-      styleRef.counter = 1;
-    } else {
-      styleRef.counter += 1;
-    }
-    styleRef.setAttribute(kremlingAttrName, kremlingAttrValue);
-    styleRef.innerHTML = props.postcss.styles;
-    document.head.appendChild(styleRef);
-    return {
-      kremlingAttrName,
-      kremlingAttrValue,
-      styleRef
-    }
-  }
-
 }
