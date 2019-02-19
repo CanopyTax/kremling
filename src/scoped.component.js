@@ -93,7 +93,7 @@ export class Scoped extends React.Component {
   newCssState(props) {
     const css = props.postcss || props.css
     const isPostCss = Boolean(css && css.id)
-    const namespace = isPostCss ? css.namespace : (props.namespace || Scoped.defaultNamespace)
+    const namespace = (isPostCss ? css.namespace : props.namespace) || Scoped.defaultNamespace;
     const rawCss = isPostCss ? css.styles : css
 
     let styleRef, kremlingAttr, kremlingAttrValue
@@ -121,7 +121,7 @@ export class Scoped extends React.Component {
     } else {
       // The attribute for namespacing the css
       kremlingAttr = namespace;
-      kremlingAttrValue = incrementCounter();
+      kremlingAttrValue = isPostCss ? css.id : incrementCounter();
 
       // The css to append to the dom
       const kremlingSelector = `[${kremlingAttr}="${kremlingAttrValue}"]`;
