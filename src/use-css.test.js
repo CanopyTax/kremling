@@ -136,6 +136,22 @@ describe('useCss()', () => {
       ReactDOM.unmountComponentAtNode(container)
     })
   })
+
+  it(`postcss should accept empty style strings`, () => {
+    const postcss = {
+      id: '15',
+      styles: ``,
+      namespace: 'donkey-kong',
+    }
+
+    act(() => {
+      ReactDOM.render(<ScopedDiv css={postcss} />, container)
+    })
+    expect(container.innerHTML).toEqual('<div donkey-kong="15"></div>')
+    act(() => {
+      ReactDOM.unmountComponentAtNode(container)
+    })
+  })
 })
 
 function ScopedDiv(props) {
