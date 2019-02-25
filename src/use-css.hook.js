@@ -3,7 +3,7 @@ import {Scoped} from './scoped.component.js'
 import {styleTags, incrementCounter, transformCss} from './style-element-utils.js'
 
 export function useCss(css, overrideNamespace) {
-  const isPostCss = Boolean(css && css.id && css.styles)
+  const isPostCss = Boolean(css && css.id)
   const namespace = overrideNamespace || (isPostCss && css.namespace) || Scoped.defaultNamespace
   const [styleElement, setStyleElement] = useState(() => getStyleElement(null, isPostCss, css, namespace))
   useStyleElement()
