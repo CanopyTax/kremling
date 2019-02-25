@@ -19,7 +19,7 @@ export class Scoped extends React.Component {
     this.state = {};
     if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
     if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
-    if (props.postcss && !(typeof props.postcss.styles === 'string' && props.postcss.id)) throw Error(`Kremlings's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
+    if (props.postcss && !(typeof props.postcss.styles === 'string' && props.postcss.id)) throw Error(`Kremling's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
 
     this.state = this.newCssState(props)
   }

@@ -3,7 +3,10 @@ import {Scoped} from './scoped.component.js'
 import {styleTags, incrementCounter, transformCss} from './style-element-utils.js'
 
 export function useCss(css, overrideNamespace) {
-  const isPostCss = Boolean(css && css.id && css.styles)
+  const isPostCss = typeof css === 'object'
+  if (isPostCss && !(css.id && typeof css.styles === 'string')) {
+    throw Error(`Kremling's "useCss" hook requires "id" and "styles" properties when using the kremling-loader`)
+  }
   const namespace = overrideNamespace || (isPostCss && css.namespace) || Scoped.defaultNamespace
   const [styleElement, setStyleElement] = useState(() => getStyleElement(null, isPostCss, css, namespace))
   useStyleElement()
