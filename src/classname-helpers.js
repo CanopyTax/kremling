@@ -32,3 +32,10 @@ function chainify(previousString, newString) {
   str.t = str.toggle;
   return str;
 }
+
+export {
+  always as a,
+  maybe as m,
+  toggle as t,
+  css as c,
+}
