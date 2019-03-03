@@ -6,6 +6,7 @@
   "repository": "git@github.com:CanopyTax/kremling.git",
   "author": "Joel Denning <joel.denning@canopytax.com>",
   "license": "Apache-2.0",
+  "types": "./src/kremling.d.ts",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.2.2",
