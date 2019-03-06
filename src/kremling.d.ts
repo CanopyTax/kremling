@@ -22,4 +22,5 @@ declare namespace Kremling {
   type Scope = {
     'data-kremling': string,
   }
+  asdfdsa
 }
