@@ -2,20 +2,20 @@ export = Kremling
 
 declare namespace Kremling {
   function useCss(css: string): Scope;
-  function always(className: string): KremlingString;
-  function a(className: string): KremlingString;
-  function maybe(className: string, condition: any): KremlingString;
-  function m(className: string, condition: any): KremlingString;
-  function toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString;
-  function t(truthyClass: string, falsyClass: string, condition: any): KremlingString;
+  function always(className: string): KremlingString & string;
+  function a(className: string): KremlingString & string;
+  function maybe(className: string, condition: any): KremlingString & string;
+  function m(className: string, condition: any): KremlingString & string;
+  function toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
+  function t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
 
   interface KremlingString extends String {
-    always(className: string): KremlingString,
-    a(className: string): KremlingString,
-    maybe(className: string, condition: any): KremlingString,
-    m(className: string, condition: any): KremlingString,
-    toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString,
-    t(truthyClass: string, falsyClass: string, condition: any): KremlingString,
+    always(className: string): KremlingString & string,
+    a(className: string): KremlingString & string,
+    maybe(className: string, condition: any): KremlingString & string,
+    m(className: string, condition: any): KremlingString & string,
+    toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString & string,
+    t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string,
     toString(): string,
   }
 
