@@ -8,7 +8,7 @@ declare namespace Kremling {
   function m(className: string, condition: any): KremlingString & string;
   function toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
   function t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
-  function krem(strings: Array<string>, ...args: Array<string>): object;
+  function k(strings: Array<string>, ...args: Array<string>): object | string;
 
   interface KremlingString extends String {
     always(className: string): KremlingString & string,
