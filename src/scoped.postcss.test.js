@@ -20,7 +20,7 @@ describe('<Scoped postcss />', function() {
     }
     const el = document.createElement('div');
     ReactDOM.render(
-      <Scoped postcss={css}>
+      <Scoped css={css}>
         <div className="crazy">Okay</div>
       </Scoped>,
       el
@@ -38,7 +38,7 @@ describe('<Scoped postcss />', function() {
     const el = document.createElement('div');
     ReactDOM.render(
       <div>
-        <Scoped postcss={css}>
+        <Scoped css={css}>
           <div>Hello</div>
         </Scoped>
       </div>,
@@ -51,7 +51,7 @@ describe('<Scoped postcss />', function() {
 
   it('when webpack updates its styles, component should update the kremling attribute and inner css', function() {
     let css = { id: '1', styles: `[kremling-1] .someRule, [kremling-1].someRule {background-color: red;}` };
-    const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
+    const component = (style) => <div><Scoped css={style}><div>Hello</div></Scoped></div>;
 
     const el = document.createElement('div');
     ReactDOM.render(component(css), el);
@@ -65,7 +65,7 @@ describe('<Scoped postcss />', function() {
 
   it('when the user updates its id, component should update <style> kremling attribute', function() {
     let css = { id: '1', styles: `[kremling-1] .someRule, [kremling-1].someRule {background-color: red;}` };
-    const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
+    const component = (style) => <div><Scoped css={style}><div>Hello</div></Scoped></div>;
 
     const el = document.createElement('div');
     ReactDOM.render(component(css), el);
@@ -88,7 +88,7 @@ describe('<Scoped postcss />', function() {
 
     ReactDOM.render(
       <div>
-        <Scoped postcss={css}>
+        <Scoped css={css}>
           <div>Hello</div>
         </Scoped>
       </div>,
@@ -99,7 +99,7 @@ describe('<Scoped postcss />', function() {
 
     ReactDOM.render(
       <div>
-        <Scoped postcss={css}>
+        <Scoped css={css}>
           <div>Hello</div>
         </Scoped>
       </div>,
@@ -115,7 +115,7 @@ describe('<Scoped postcss />', function() {
 
   it(`shouldn't throw errors when empty postcss.styles is passed in`, () => {
     const css = { id: '1', styles: '' };
-    const component = (style) => <div><Scoped postcss={style}><div>Hello</div></Scoped></div>;
+    const component = (style) => <div><Scoped css={style}><div>Hello</div></Scoped></div>;
     const el = document.createElement('div');
     ReactDOM.render(component(css), el);
     expect(document.head.querySelector('style').innerHTML).toEqual('');
