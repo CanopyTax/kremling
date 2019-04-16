@@ -18,6 +18,10 @@ export class Scoped extends React.Component {
     super(props);
     this.state = {};
     if (!props.css) throw Error(`Kremling's <Scoped /> component requires the 'css' prop.`);
+    if (typeof props.css === 'object' && (
+      typeof props.css.id !== 'string' ||
+      typeof props.css.styles !== 'string')
+    ) throw Error(`Kremling's <Scoped /> component requires either a string or an object with "id" and "styles" properties.`);
     this.state = this.newCssState(props)
   }
 
