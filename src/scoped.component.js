@@ -1,15 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import PropTypes from 'prop-types';
+import { string, object, oneOfType } from 'prop-types';
 import {styleTags, incrementCounter, transformCss} from './style-element-utils.js'
 
 const reactSupportsReturningArrays = !!ReactDOM.createPortal;
 
 export class Scoped extends React.Component {
   static propTypes = {
-    css: PropTypes.string,
-    postcss: PropTypes.object,
-    namespace: PropTypes.string,
+    css: oneOfType([string, object]),
+    postcss: object,
+    namespace: string,
   }
 
   static defaultNamespace = 'kremling'
@@ -17,10 +17,11 @@ export class Scoped extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    if (!props.css && !props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props.`);
-    if (props.css && props.postcss) throw Error(`Kremling's <Scoped /> component requires either the 'css' or 'postcss' props. Cannot use both.`);
-    if (props.postcss && !(typeof props.postcss.styles === 'string' && props.postcss.id)) throw Error(`Kremling's <Scoped /> component 'postcss' prop requires an object containing 'styles' and 'id' properties. Try using the kremling-loader.`);
-
+    if (!props.css) throw Error(`Kremling's <Scoped /> component requires the 'css' prop.`);
+    if (typeof props.css === 'object' && (
+      typeof props.css.id !== 'string' ||
+      typeof props.css.styles !== 'string')
+    ) throw Error(`Kremling's <Scoped /> component requires either a string or an object with "id" and "styles" properties.`);
     this.state = this.newCssState(props)
   }
 
