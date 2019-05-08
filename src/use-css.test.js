@@ -152,6 +152,24 @@ describe('useCss()', () => {
       ReactDOM.unmountComponentAtNode(container)
     })
   })
+
+  it(`removes the local styleTag references when the component is unmounted`, () => {
+    const postcss = {
+      id: '8',
+      styles: `[star-wars='8'] .kenobi, [star-wars='8'].kenobi{}`,
+      namespace: 'star-wars',
+    }
+
+    act(() => {
+      ReactDOM.render(<ScopedDiv css={postcss} />, container)
+    })
+    expect(container.innerHTML).toEqual('<div star-wars="8"></div>')
+    expect(styleTags[postcss.styles]).toBeDefined()
+    act(() => {
+      ReactDOM.unmountComponentAtNode(container)
+    })
+    expect(styleTags[postcss.styles]).toBeUndefined()
+  })
 })
 
 function ScopedDiv(props) {
