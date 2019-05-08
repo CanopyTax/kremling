@@ -8,91 +8,63 @@ export function useCss(css, overrideNamespace) {
     throw Error(`Kremling's "useCss" hook requires "id" and "styles" properties when using the kremling-loader`)
   }
   const namespace = overrideNamespace || (isPostCss && css.namespace) || Scoped.defaultNamespace
-  const styleElement = useRef()
-  console.log('namespace', namespace)
+  const [ styleObj, setStyleObj ] = useState(() => {
+    const element = getStyleElement(isPostCss, css, namespace, true)
+    if (element) {
+      return {
+        [element.kremlingAttr]: String(element.kremlingValue).toString()
+      }
+    } else {
+      return {}
+    }
+  })
+
   useLayoutEffect(
     () => {
-      createStyleElement()
+      const element = getStyleElement(isPostCss, css, namespace)
+      if (element && element.kremlingAttr && element.kremlingValue) {
+        setStyleObj({[element.kremlingAttr]: String(element.kremlingValue).toString()})
+      }
+      return () => maybeRemoveElement(element)
     },
-    []
+    [css, namespace, isPostCss]
   )
-  // const [styleElement, setStyleElement] = useState(() => getStyleElement(null, isPostCss, css, namespace))
-  // useStyleElement()
 
-  return {}
+  return styleObj
 
-
-  function createStyleElement() {
-
-    console.log('createStyleElement')
-    const kremlingAttr = isPostCss ? namespace : `data-${namespace}`
-    const kremlingValue = isPostCss ? css.id : incrementCounter()
-    const kremlingSelector = `[${kremlingAttr}='${kremlingValue}']`
-    console.log('kremlingSelector', kremlingSelector)
-    const rawCss = isPostCss ? css.styles : css
-    const cssToInsert = isPostCss ? css.styles : transformCss(css, kremlingSelector)
-
-    let styleElement
-
-    // creating a new element
-    styleElement = document.createElement('style')
-    styleElement.type = 'text/css'
-    styleElement.textContent = cssToInsert
-    styleElement.kremlings = 1
-    styleElement.kremlingAttr = kremlingAttr
-    styleElement.kremlingValue = kremlingValue
-
-    const r = document.head.appendChild(styleElement)
-    console.log('r', r)
-
+  function maybeRemoveElement(element) {
+    if (--element.kremlings === 0) {
+      const rawCss = isPostCss ? css.styles : css
+      document.head.removeChild(element)
+      delete styleTags[rawCss]
+    }
   }
 
+  function getStyleElement (isPostCss, css, namespace, incrementKremlingsIfFound = false) {
+    const rawCss = isPostCss ? css.styles : css
+    const element = styleTags[rawCss]
+    if (element) {
+      if (incrementKremlingsIfFound) {
+        element.kremlings = element.kremlings + 1
+      }
+      return element
+    } else {
+      const kremlingAttr = isPostCss ? namespace : `data-${namespace}`
+      const kremlingValue = isPostCss ? css.id : incrementCounter()
+      const kremlingSelector = `[${kremlingAttr}='${kremlingValue}']`
+      const cssToInsert = isPostCss ? css.styles : transformCss(css, kremlingSelector)
+      let styleElement
+      // creating a new element
+      styleElement = document.createElement('style')
+      styleElement.type = 'text/css'
+      styleElement.textContent = cssToInsert
+      styleElement.kremlings = 1
+      styleElement.kremlingAttr = kremlingAttr
+      styleElement.kremlingValue = kremlingValue
 
-  // return {
-  //   [styleElement.kremlingAttr]: String(styleElement.kremlingValue).toString(),
-  // }
-
-  // function useStyleElement() {
-  //   useLayoutEffect(() => {
-  //     const newStyleElement = getStyleElement(styleElement, isPostCss, css, namespace)
-  //     setStyleElement(newStyleElement)
-  //
-  //     return () => {
-  //       if (--styleElement.kremlings === 0) {
-  //         document.head.removeChild(styleElement)
-  //         delete styleTags[css]
-  //       }
-  //     }
-  //   }, [css, namespace, styleElement, setStyleElement, isPostCss])
-  // }
+      const r = document.head.appendChild(styleElement)
+      styleTags[rawCss] = r
+      return styleElement
+    }
+  }
 }
-
-// function getStyleElement(oldStyleElement, isPostCss, css, namespace) {
-//   const kremlingAttr = isPostCss ? namespace : `data-${namespace}`
-//   const kremlingValue = isPostCss ? css.id : incrementCounter()
-//
-//   let styleElement = isPostCss ? styleTags[css.styles] : styleTags[css]
-//
-//   if (styleElement) {
-//     // This css is already being used by another instance of the component, or another component altogether.
-//     if (styleElement !== oldStyleElement) {
-//       styleElement.kremlings++
-//     }
-//   } else {
-//     const kremlingSelector = `[${kremlingAttr}='${kremlingValue}']`
-//     const rawCss = isPostCss ? css.styles : css
-//     const cssToInsert = isPostCss ? css.styles : transformCss(css, kremlingSelector)
-//
-//     styleElement = document.createElement('style')
-//     styleElement.type = 'text/css'
-//     styleElement.textContent = cssToInsert
-//     styleElement.kremlings = 1
-//     styleElement.kremlingAttr = kremlingAttr
-//     styleElement.kremlingValue = kremlingValue
-//     document.head.appendChild(styleElement)
-//
-//     styleTags[rawCss] = styleElement
-//   }
-//
-//   return styleElement
-// }
