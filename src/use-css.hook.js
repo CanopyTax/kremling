@@ -1,4 +1,4 @@
-import {useLayoutEffect, useEffect, useState, useRef} from 'react'
+import {useLayoutEffect, useEffect, useState } from 'react'
 import {Scoped} from './scoped.component.js'
 import {styleTags, incrementCounter, transformCss} from './style-element-utils.js'
 
