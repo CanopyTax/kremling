@@ -8,7 +8,7 @@ export function useCss(css, overrideNamespace) {
     throw Error(`Kremling's "useCss" hook requires "id" and "styles" properties when using the kremling-loader`)
   }
   const namespace = overrideNamespace || (isPostCss && css.namespace) || Scoped.defaultNamespace
-  const [styleElement, setStyleElement] = useState(() => getStyleElement(null, isPostCss, css, namespace))
+  const [styleElement, setStyleElement] = useState(() => getStyleElement(isPostCss, css, namespace, true))
   useStyleElement()
 
   return {
@@ -17,20 +17,21 @@ export function useCss(css, overrideNamespace) {
 
   function useStyleElement() {
     useLayoutEffect(() => {
-      const newStyleElement = getStyleElement(styleElement, isPostCss, css, namespace)
+      const newStyleElement = getStyleElement(isPostCss, css, namespace)
       setStyleElement(newStyleElement)
 
       return () => {
         if (--styleElement.kremlings === 0) {
+          const rawCss = isPostCss ? css.styles : css
           document.head.removeChild(styleElement)
-          delete styleTags[css]
+          delete styleTags[rawCss]
         }
       }
-    }, [css, namespace, styleElement, setStyleElement, isPostCss])
+    }, [css, namespace, isPostCss])
   }
 }
 
-function getStyleElement(oldStyleElement, isPostCss, css, namespace) {
+function getStyleElement(isPostCss, css, namespace, incrementKremingsIfFound = false) {
   const kremlingAttr = isPostCss ? namespace : `data-${namespace}`
   const kremlingValue = isPostCss ? css.id : incrementCounter()
 
@@ -38,7 +39,7 @@ function getStyleElement(oldStyleElement, isPostCss, css, namespace) {
 
   if (styleElement) {
     // This css is already being used by another instance of the component, or another component altogether.
-    if (styleElement !== oldStyleElement) {
+    if (incrementKremingsIfFound) {
       styleElement.kremlings++
     }
   } else {
