@@ -40,7 +40,6 @@ function getStyleElement(oldStyleElement, isPostCss, css, namespace) {
   if (styleElement) {
     // This css is already being used by another instance of the component, or another component altogether.
     if (styleElement !== oldStyleElement) {
-      console.log('incrementing', JSON.stringify(styleElement.kremlings))
       styleElement.kremlings++
     }
   } else {
