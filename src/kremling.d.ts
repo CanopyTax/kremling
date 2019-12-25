@@ -1,7 +1,9 @@
-export = Kremling
+import * as React from 'react';
+
+export = Kremling;
 
 declare namespace Kremling {
-  function useCss(css: string): Scope;
+  function useCss(css: string | object): Scope;
   function always(className: string): KremlingString & string;
   function a(className: string): KremlingString & string;
   function maybe(className: string, condition: any): KremlingString & string;
@@ -19,6 +21,13 @@ declare namespace Kremling {
     t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string,
     toString(): string,
   }
+
+  interface ScopedProps {
+    css: string | object;
+    namespace?: string;
+  }
+
+  class Scoped extends React.Component<ScopedProps> {}
 
   type Scope = {
     'data-kremling': string,
