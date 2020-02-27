@@ -85,4 +85,12 @@ describe("Classname helpers", function() {
     expect(() => toggle('yoshi', true)).toThrow();
     expect(() => always('sup').maybe('yo', true).toggle('blop', false)).toThrow();
   });
+
+  it("should accept a boxed string as an argument", () => {
+    const boxedKremlingString = always('thing')
+    const boxedKremlingString2 = always('thing2')
+    always(boxedKremlingString)
+    maybe(boxedKremlingString, true)
+    toggle(boxedKremlingString, boxedKremlingString2, true)
+  });
 });
