@@ -6,17 +6,21 @@ export function always(...args) {
 }
 
 export function maybe(className, enabled) {
-  if (typeof className !== 'string') {
+  if (!isString(className)) {
     throw new Error('kremling maybe() must be called with a string className and a boolean expression');
   }
   return chainify(this, enabled ? className : '');
 }
 
 export function toggle(className1, className2, enabled) {
-  if (typeof className1 !== 'string' || typeof className2 !== 'string') {
+  if (!isString(className1) || !isString(className2)) {
     throw new Error('kremling toggle() must be called with 2 string classNames and a boolean expression');
   }
   return chainify(this, enabled ? className1 : className2);
+}
+
+function isString(str) {
+  return typeof str === 'string' || str instanceof String
 }
 
 function chainify(previousString, newString) {
