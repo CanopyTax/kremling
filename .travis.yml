@@ -3,7 +3,7 @@ addons:
   chrome: stable
 language: node_js
 node_js:
-  - "8.9.0"
+  - "14"
 before_script:
   - yarn global add codecov
   - yarn build
