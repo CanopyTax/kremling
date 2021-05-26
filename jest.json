@@ -5,9 +5,10 @@
     "text-summary",
     "text"
   ],
+  "testEnvironment": "jsdom",
   "collectCoverageFrom": ["src/**/*.js"],
   "transform": {
-    ".*": "./node_modules/babel-jest"
+    ".*": "babel-jest"
   },
   "rootDir": "./",
   "modulePaths": ["./"]
