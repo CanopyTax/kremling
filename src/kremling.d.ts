@@ -3,22 +3,25 @@ import * as React from 'react';
 export = Kremling;
 
 declare namespace Kremling {
+  // Kremling can handle getting passed an undefined value
+  type ClassName = string | undefined;
+
   function useCss(css: string | object): Scope;
-  function always(...className: string[]): KremlingString & string;
-  function a(...className: string[]): KremlingString & string;
-  function maybe(className: string, condition: any): KremlingString & string;
-  function m(className: string, condition: any): KremlingString & string;
-  function toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
-  function t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string;
+  function always(...className: ClassName[]): KremlingString & string;
+  function a(...className: ClassName[]): KremlingString & string;
+  function maybe(className: ClassName, condition: any): KremlingString & string;
+  function m(className: ClassName, condition: any): KremlingString & string;
+  function toggle(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string;
+  function t(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string;
   function k(strings: TemplateStringsArray, ...args: Array<string>): object | string;
 
   interface KremlingString extends String {
-    always(...className: string[]): KremlingString & string,
-    a(...className: string[]): KremlingString & string,
-    maybe(className: string, condition: any): KremlingString & string,
-    m(className: string, condition: any): KremlingString & string,
-    toggle(truthyClass: string, falsyClass: string, condition: any): KremlingString & string,
-    t(truthyClass: string, falsyClass: string, condition: any): KremlingString & string,
+    always(...className: ClassName[]): KremlingString & string,
+    a(...className: ClassName[]): KremlingString & string,
+    maybe(className: ClassName, condition: any): KremlingString & string,
+    m(className: ClassName, condition: any): KremlingString & string,
+    toggle(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string,
+    t(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string,
     toString(): string,
   }
 
