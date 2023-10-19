@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 export = Kremling;
 
@@ -11,18 +11,37 @@ declare namespace Kremling {
   function a(...className: ClassName[]): KremlingString & string;
   function maybe(className: ClassName, condition: any): KremlingString & string;
   function m(className: ClassName, condition: any): KremlingString & string;
-  function toggle(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string;
-  function t(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string;
-  function k(strings: TemplateStringsArray, ...args: Array<string>): object | string;
+  function toggle(
+    truthyClass: ClassName,
+    falsyClass: ClassName,
+    condition: any,
+  ): KremlingString & string;
+  function t(
+    truthyClass: ClassName,
+    falsyClass: ClassName,
+    condition: any,
+  ): KremlingString & string;
+  function k(
+    strings: TemplateStringsArray,
+    ...args: Array<string>
+  ): object | string;
 
   interface KremlingString extends String {
-    always(...className: ClassName[]): KremlingString & string,
-    a(...className: ClassName[]): KremlingString & string,
-    maybe(className: ClassName, condition: any): KremlingString & string,
-    m(className: ClassName, condition: any): KremlingString & string,
-    toggle(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string,
-    t(truthyClass: ClassName, falsyClass: ClassName, condition: any): KremlingString & string,
-    toString(): string,
+    always(...className: ClassName[]): KremlingString & string;
+    a(...className: ClassName[]): KremlingString & string;
+    maybe(className: ClassName, condition: any): KremlingString & string;
+    m(className: ClassName, condition: any): KremlingString & string;
+    toggle(
+      truthyClass: ClassName,
+      falsyClass: ClassName,
+      condition: any,
+    ): KremlingString & string;
+    t(
+      truthyClass: ClassName,
+      falsyClass: ClassName,
+      condition: any,
+    ): KremlingString & string;
+    toString(): string;
   }
 
   interface ScopedProps {
@@ -33,6 +52,6 @@ declare namespace Kremling {
   class Scoped extends React.Component<ScopedProps> {}
 
   type Scope = {
-    'data-kremling': string,
-  }
+    "data-kremling": string;
+  };
 }

@@ -1,27 +1,12 @@
 {
   "name": "kremling",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "Embarrassingly simple css for React",
   "main": "lib/kremling.js",
   "repository": "git@github.com:CanopyTax/kremling.git",
   "author": "Joel Denning <joel.denning@canopytax.com>",
   "license": "Apache-2.0",
   "types": "./src/kremling.d.ts",
-  "devDependencies": {
-    "@babel/cli": "^7.14.3",
-    "@babel/core": "^7.14.3",
-    "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/preset-env": "^7.14.2",
-    "@babel/preset-react": "^7.13.13",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "^27.0.1",
-    "babel-loader": "^8.2.2",
-    "jest": "^27.0.1",
-    "jest-cli": "^27.0.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "rimraf": "^3.0.2"
-  },
   "scripts": {
     "prepublish": "yarn build",
     "build": "rimraf lib && yarn compile",
@@ -32,7 +17,28 @@
     "watch-tests": "jest --config jest.json --watch"
   },
   "dependencies": {
-    "prop-types": "^15.7.2"
+    "prop-types": "^15"
   },
-  "packageManager": "yarn@1.22.1"
+  "devDependencies": {
+    "@babel/cli": "^7.23.0",
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.5.1",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rimraf": "^5.0.5"
+  },
+  "peerDependencies": {
+    "react": ">=16",
+    "react-dom": ">=16"
+  },
+  "packageManager": "yarn@3.6.4"
 }
