@@ -11,5 +11,6 @@
     ".*": "babel-jest"
   },
   "rootDir": "./",
-  "modulePaths": ["./"]
+  "modulePaths": ["./"],
+  "setupFilesAfterEnv": ["<rootDir>/test-setup.js"]
 }

@@ -1,31 +1,35 @@
-export function css(...args) {
-}
+export function css(...args) {}
 
 export function always(...args) {
-  return chainify(this, args.join(' '));
+  return chainify(this, args.join(" "));
 }
 
 export function maybe(className, enabled) {
   if (!isString(className)) {
-    throw new Error('kremling maybe() must be called with a string className and a boolean expression');
+    throw new Error(
+      "kremling maybe() must be called with a string className and a boolean expression",
+    );
   }
-  return chainify(this, enabled ? className : '');
+  return chainify(this, enabled ? className : "");
 }
 
 export function toggle(className1, className2, enabled) {
   if (!isString(className1) || !isString(className2)) {
-    throw new Error('kremling toggle() must be called with 2 string classNames and a boolean expression');
+    throw new Error(
+      "kremling toggle() must be called with 2 string classNames and a boolean expression",
+    );
   }
   return chainify(this, enabled ? className1 : className2);
 }
 
 function isString(str) {
-  return typeof str === 'string' || str instanceof String
+  return typeof str === "string" || str instanceof String;
 }
 
 function chainify(previousString, newString) {
-  const existing = previousString instanceof String ? previousString.toString() : '';
-  const str = new String([existing, newString].join(' ').trim());
+  const existing =
+    previousString instanceof String ? previousString.toString() : "";
+  const str = new String([existing, newString].join(" ").trim());
   str.css = css.bind(str);
   str.c = str.css;
   str.always = always.bind(str);
@@ -37,9 +41,4 @@ function chainify(previousString, newString) {
   return str;
 }
 
-export {
-  always as a,
-  maybe as m,
-  toggle as t,
-  css as c,
-}
+export { always as a, maybe as m, toggle as t, css as c };
