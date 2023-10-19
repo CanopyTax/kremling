@@ -2,10 +2,10 @@ import { always, maybe, toggle } from "./classname-helpers.js";
 
 describe("Classname helpers", function () {
   it("should always return through a chain", function () {
-    // expect(always("krimp").toString()).toBe("krimp");
-    // expect(always("krimp").always("klaptrap").always("klank").toString()).toBe(
-    //   "krimp klaptrap klank",
-    // );
+    expect(always("krimp").toString()).toBe("krimp");
+    expect(always("krimp").always("klaptrap").always("klank").toString()).toBe(
+      "krimp klaptrap klank",
+    );
   });
 
   it("should maybe return through a chain", function () {
